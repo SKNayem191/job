@@ -46,7 +46,6 @@ class Job(models.Model):
  
 
 class Applicant(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now=True, auto_now_add=False)

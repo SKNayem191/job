@@ -22,21 +22,44 @@ def get_success_url(request):
 
 
 
-def employee_registration(request):
+# def employee_registration(request):
 
+#     """
+#     Handle Employee Registration
+
+#     """
+#     form = EmployeeRegistrationForm(request.POST or None)
+#     extraform = ExtraEmployee(request.POST)
+#     if form.is_valid() & extraform.is_valid():
+#         form = form.save(False)
+#         form = extraform
+#         form.save()
+#         return redirect('account:login')
+#     context={
+        
+#             'form':form , 'extraform':extraform
+#         }
+
+#     return render(request,'account/employee-registration.html',context)
+
+def employee_registration(request):
     """
     Handle Employee Registration
 
     """
-    form = EmployeeRegistrationForm(request.POST or None)
-    if form.is_valid():
-        form = form.save()
+    form = EmployeeRegistrationForm()
+    extraform = ExtraEmployee()
+    if request.method == 'POST':
+        form = EmployeeRegistrationForm(request.POST)
+        extraform = ExtraEmployee(request.POST, request.FILES)
+        if form.is_valid() & extraform.is_valid():
+            user = form.save()
+            extraform = extraform.save(False)
+            extraform.user = user
+            extraform.save()
         return redirect('account:login')
-    context={
-        
-            'form':form
-        }
 
+    context = {'form':form, 'extraform':extraform}
     return render(request,'account/employee-registration.html',context)
 
 
@@ -72,6 +95,7 @@ def employee_edit_profile(request, id=id):
     form = EmployeeProfileEditForm(request.POST or None, instance=user)
     if form.is_valid():
         form = form.save()
+
         messages.success(request, 'Your Profile Was Successfully Updated!')
         return redirect(reverse("account:edit-profile", kwargs={
                                     'id': form.id
@@ -82,6 +106,18 @@ def employee_edit_profile(request, id=id):
         }
 
     return render(request,'account/employee-edit-profile.html',context)
+
+@login_required(login_url=reverse_lazy('accounts:login'))
+@user_is_employee
+def update_cv(request, id=id):
+    user = get_object_or_404(User, id=id)
+    exform = ExtraEmployee(request.POST or None, instance=user)
+    if exform.is_valid():
+        exform = exform.save()
+        messages.success(request, 'Your Profile Was Successfully Updated!')
+        return redirect(reverse("account:edit-profile", kwargs={'id': exform.id}))
+    context = {'exform':exform}
+    return render(request,'account/employee-edit-cv.html',context)
 
 
 

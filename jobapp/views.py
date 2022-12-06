@@ -194,7 +194,7 @@ def search_result_view(request):
 @user_is_employee
 def apply_job_view(request, id):
 
-    form = JobApplyForm(request.POST or None)
+    form = JobApplyForm(request.POST or None, request.FILES)
 
     user = get_object_or_404(User, id=request.user.id)
     applicant = Applicant.objects.filter(user=user, job=id)

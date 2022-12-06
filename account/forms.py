@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 
-from account.models import User
+from account.models import User, Employe
 
 
 class EmployeeRegistrationForm(UserCreationForm):
@@ -165,3 +165,22 @@ class EmployeeProfileEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["first_name", "last_name", "gender"]
+
+
+# class ExtraFieldEdit(forms.ModelForm):
+#     def __init__(self, *args, **kwargs):
+#         super(ExtraFieldEdit, self).__init__(*args, **kwargs)
+#         self.fields['file'].widget.attrs.update({})
+
+#     class Meta:
+#         model = Employe
+#         fields = ['file']
+
+
+class ExtraEmployee(forms.ModelForm):
+    class Meta:
+        model = Employe
+        fields = ['file']
+
+
+
